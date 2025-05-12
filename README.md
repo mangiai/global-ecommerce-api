@@ -1,6 +1,6 @@
 # Global E-commerce Admin API (Backend Developer Test)
 
-![Dashboard Screenshot](./screenshots/dashboard.png)
+![Dashboard](./screenshots/Dashboard.png)
 
 A complete backend system with a visual dashboard built using **FastAPI**, **PostgreSQL**, and **HTML/Chart.js**, designed as a take-home test for backend developer evaluation.
 
