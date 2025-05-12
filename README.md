@@ -108,19 +108,19 @@ Then open:
 
 ### Dashboard View
 
-![Dashboard](./screenshots/summary_revenue_chart.png)
+![Dashboard](./screenshots/Dashboard.png)
 
 ### Top Products
 
-![Top Products](./screenshots/top_products_chart.png)
+![Top Products](./screenshots/Top%20Selling%20Products.png)
 
 ### Product Grid
 
-![Product Catalog](./screenshots/product_cards.png)
+![Product Catalog](./screenshots/Catalog.png)
 
 ### Add Product Form
 
-![Add Product](./screenshots/add_product_form.png)
+![Add Product](./screenshots/Add%20Product.png)
 
 ---
 
