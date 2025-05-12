@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>📊 E-commerce Dashboard</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --primary: #3498db;
+      --accent: #2ecc71;
+      --light-bg: #f9f9fb;
+      --card-bg: #ffffff;
+      --text-dark: #2c3e50;
+      --text-gray: #7f8c8d;
+    }
+
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: var(--light-bg);
+      color: var(--text-dark);
+      margin: 0;
+      padding: 2rem;
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .summary-section {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin: 2rem auto;
+      max-width: 960px;
+    }
+
+    .summary-tile {
+      background: var(--card-bg);
+      padding: 1.5rem 2rem;
+      border-radius: 16px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+      text-align: center;
+      flex: 1;
+    }
+
+    .summary-tile h2 {
+      font-size: 1.1rem;
+      color: var(--text-gray);
+      margin-bottom: 0.5rem;
+    }
+
+    .summary-tile p {
+      font-size: 2rem;
+      font-weight: 600;
+    }
+
+    .chart-container {
+      max-width: 960px;
+      margin: 2rem auto;
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+    }
+
+    .products-section {
+      max-width: 960px;
+      margin: 2rem auto;
+      background: var(--card-bg);
+      border-radius: 16px;
+      padding: 2rem;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+    }
+
+    h2 {
+      color: var(--text-dark);
+      font-size: 1.5rem;
+      margin-bottom: 1rem;
+    }
+
+    ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    li {
+      background: #f1f4f8;
+      padding: 12px 18px;
+      margin: 6px 0;
+      border-radius: 8px;
+      font-size: 1rem;
+      color: #34495e;
+    }
+
+    .product-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 1rem;
+    padding-top: 1rem;
+    }
+
+    .product-card {
+    background: #f5f8fa;
+    padding: 1rem 1.2rem;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+    transition: transform 0.2s ease;
+    }
+
+    .product-card:hover {
+    transform: translateY(-3px);
+    }
+
+    .product-name {
+    font-weight: 600;
+    color: #2c3e50;
+    font-size: 1.1rem;
+    }
+
+    .product-meta {
+    font-size: 0.9rem;
+    color: #7f8c8d;
+    margin-top: 4px;
+    }
+
+    .product-price {
+    margin-top: 6px;
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #2ecc71;
+    }
+
+    .add-button {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  background: #2ecc71;
+  color: #fff;
+  font-size: 2rem;
+  font-weight: bold;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+  transition: background 0.3s ease;
+  z-index: 999;
+    }
+
+.add-button:hover {
+  background: #27ae60;
+    }   
+
+
+
+
+  </style>
+</head>
+<body>
+
+  <h1>📊 E-commerce Sales Dashboard</h1>
+
+  <div class="summary-section">
+    <div class="summary-tile">
+      <h2>Total Revenue</h2>
+      <p id="totalRevenue">$0</p>
+    </div>
+    <div class="summary-tile">
+      <h2>Total Orders</h2>
+      <p id="totalOrders">0</p>
+    </div>
+  </div>
+
+  <div class="chart-container">
+    <h2>📈 Daily Revenue</h2>
+    <canvas id="revenueChart"></canvas>
+  </div>
+
+  <div class="chart-container">
+    <h2>🏆 Top Selling Products</h2>
+    <canvas id="topProductsChart"></canvas>
+  </div>
+
+  <div class="products-section">
+    <h2>🛍️ Product Catalog</h2>
+    <div class="product-grid" id="products"></div>
+  </div>
+  
+
+  <script>
+    // Revenue chart
+    fetch('/sales/summary?period=daily')
+      .then(res => res.json())
+      .then(data => {
+        const labels = data.map(e => e.period);
+        const revenue = data.map(e => e.total_revenue);
+
+        new Chart(document.getElementById('revenueChart'), {
+          type: 'line',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: 'Daily Revenue',
+              data: revenue,
+              borderColor: '#3498db',
+              backgroundColor: 'rgba(52, 152, 219, 0.1)',
+              tension: 0.4,
+              fill: true,
+              pointRadius: 3,
+              pointHoverRadius: 5
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: { display: true, position: 'top' }
+            }
+          }
+        });
+      });
+
+    // Totals and top products
+    fetch('/sales/totals')
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById('totalRevenue').textContent = `$${data.total_revenue.toFixed(2)}`;
+        document.getElementById('totalOrders').textContent = data.total_orders;
+
+        const labels = data.top_products.map(p => p.name);
+        const values = data.top_products.map(p => p.qty);
+
+        new Chart(document.getElementById('topProductsChart'), {
+          type: 'bar',
+          data: {
+            labels: labels,
+            datasets: [{
+              label: 'Units Sold',
+              data: values,
+              backgroundColor: '#2ecc71'
+            }]
+          },
+          options: {
+            responsive: true,
+            plugins: {
+              legend: { display: false }
+            }
+          }
+        });
+      });
+
+    // Product list
+    fetch('/products/')
+    .then(res => res.json())
+    .then(data => {
+        const container = document.getElementById('products');
+        data.forEach(p => {
+        const div = document.createElement('div');
+        div.classList.add('product-card');
+
+        div.innerHTML = `
+            <div class="product-name">${p.name}</div>
+            <div class="product-meta">${p.category}</div>
+            <div class="product-price">$${p.price}</div>
+        `;
+        container.appendChild(div);
+        });
+    });
+
+  </script>
+
+    <a href="/add-product" class="add-button" title="Add Product">+</a>
+
+
+</body>
+</html>
